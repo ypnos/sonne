@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sonne</title>
+        <link rel="stylesheet" href="/static/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+        <style>
+            ul > li {
+                font-size: 2em;
+            }
+
+            .sonne-city {
+                margin-right: 1ch;
+            }
+
+            body:not(.sonne-no-results) .sonne-no-results-label {
+                display: none;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>Sonne</h1>
+            <div class="well text-center">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label class="sr-only">Temperatur</label>
+                        <input name='temp' class="form-control input-lg" type="number" min="0" max="100" placeholder="Temperature" required="required" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only">Monat</label>
+                        <select name='month' class="form-control input-lg" placeholder="Month">
+                            <option value="0">January</option>
+                            <option value="1">February</option>
+                            <option value="2">March</option>
+                            <option value="3">April</option>
+                            <option value="4">May</option>
+                            <option value="5">June</option>
+                            <option value="6">July</option>
+                            <option value="7">August</option>
+                            <option value="8">September</option>
+                            <option value="9">October</option>
+                            <option value="10">November</option>
+                            <option value="11">December</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-lg">Show me!</button>
+                </form>
+            </div>
+            <ul class="list-unstyled">
+            </ul>
+            <div class="alert alert-warning sonne-no-results-label">Nowhere :/</div>
+        </div>
+
+        <template id="sonne-city-template">
+            <span class="sonne-city"></span><span class="sonne-temp"></span>
+        </template>
+
+        <script>
+            let form = document.querySelector('form');
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+
+                let ul = document.querySelector('ul');
+                ul.textContent = '';
+
+                let url = `/api/query?temp=${form.elements['temp'].value}&month=${form.elements['month'].value}`;
+                fetch(url).then(response => response.json()).then(results => {
+                    document.body.classList.toggle('sonne-no-results', results.length === 0);
+                    for (let result of results) {
+                        let li = document.createElement('li');
+                        li.appendChild(document.importNode(document.querySelector('#sonne-city-template').content, true));
+                        li.querySelector('.sonne-city').textContent = result.name;
+                        li.querySelector('.sonne-temp').textContent = `${result.temp}°C`;
+                        ul.appendChild(li);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
