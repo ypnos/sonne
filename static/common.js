@@ -16,8 +16,11 @@ function query(pos) {
         for (let result of results) {
             console.log(result);
             let li = document.createElement('li');
+            li.classList.add('list-group-item');
             li.appendChild(document.importNode(document.querySelector('#sonne-city-template').content, true));
-            li.querySelector('.sonne-city').textContent = result.name;
+            let a = li.querySelector('.sonne-city a');
+            a.href = `https://www.google.com/maps/dir/Current+Location/${result.name}`;
+            a.textContent = result.name;
             li.querySelector('.sonne-temp').textContent = `${result.temps[month]} °C`;
             if (result.dist) {
                 li.querySelector('.sonne-dist').textContent = `${Math.round(result.dist)} km`;

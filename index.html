@@ -14,18 +14,29 @@
     </head>
 
     <body>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">{{ title }}</a>
+                </div>
+            </div>
+        </nav>
         <div class="container">
-            <h1>{{ title }}</h1>
-
            {% include form.html %}
 
-            <ul class="list-unstyled">
+            <ul class="list-group">
             </ul>
             <div class="alert alert-warning sonne-no-results-label">Nowhere :/</div>
         </div>
 
         <template id="sonne-city-template">
-            <span class="sonne-city"></span><span class="sonne-temp"></span><span class="sonne-dist"></span>
+            <h4 class="list-group-item-heading sonne-city">
+                <a target="_blank"></a> <small>Germany</small>
+            </h4>
+            <p class="list-group-item-text">
+                <span class="sonne-temp"></span>
+                <small class="sonne-dist"></small>
+            </p>
         </template>
 
         <!-- World map -->

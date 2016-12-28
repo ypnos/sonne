@@ -9,6 +9,8 @@ from tornado.web import Application, RequestHandler, StaticFileHandler
 import json
 import configparser
 
+DEFAULT_CONFIG = {'global': {'name': 'Sonne', 'port': 8080}}
+
 sonne = None # global access to application object
 
 class Sonne:
@@ -26,13 +28,14 @@ class Sonne:
         self.loadConfig()
         self.loadData()
 
-        port = self.config['global'].get('port', 8080)
+        port = self.config['global']['port']
         self.application.listen(port)
         print('Listening on port {}'.format(port))
         IOLoop.current().start()
 
     def loadConfig(self):
         config = configparser.ConfigParser()
+        config.read_dict(DEFAULT_CONFIG)
         try:
             config.read('site.cfg')
         except:
@@ -43,6 +46,7 @@ class Sonne:
         data = json.load(open('wwis.json'))
         for item in data.values():
             name = item['cityName']
+            country = item['country']
             #if not 'climateMonth' in item['climate']:
             climate_month = item['climate']['climateMonth']
             if len(climate_month) != 12: # or not climate_month[0]['maxTemp']:
@@ -50,19 +54,20 @@ class Sonne:
                 continue
             temps = [float(m['maxTemp'] or -1) for m in climate_month]
             latlong = (float(item['cityLatitude']), float(item['cityLongitude']))
-            self.cities.append(City(name, temps, latlong))
+            self.cities.append(City(name, country, temps, latlong))
         print('Read climate data for {} cities'.format(len(self.cities)))
 
 class City:
-    def __init__(self, name, temps, latlong):
+    def __init__(self, name, country, temps, latlong):
         self.name = name
+        self.country = country
         self.temps = temps
         self.latlong = latlong
 
 class IndexHandler(RequestHandler):
     def get(self):
         data = {
-            'title': sonne.config['global'].get('name', 'Sonne')
+            'title': sonne.config['global']['name']
         }
         self.render('index.html', **data)
 
