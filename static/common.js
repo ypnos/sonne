@@ -1,8 +1,8 @@
 "use strict";
 
 function query(pos) {
+
     let ul = document.querySelector('ul');
-    ul.textContent = '';
 
     let month = form.elements['month'].value;
 
@@ -10,8 +10,9 @@ function query(pos) {
     if (pos) {
         url += `&latlong=${pos.latitude},${pos.longitude}`
     }
-    fetch(url).then(response => response.json()).then(results => {
+    return fetch(url).then(response => response.json()).then(results => {
         document.body.classList.toggle('sonne-no-results', results.length === 0);
+        ul.textContent = '';
         sonneMap.clearCities();
         for (let result of results) {
             console.log(result);
@@ -30,15 +31,19 @@ function query(pos) {
 
             sonneMap.addCity(result);
         }
+
     });
 }
 
 let form = document.querySelector('form');
 form.addEventListener('submit', event => {
     event.preventDefault();
-    navigator.geolocation.getCurrentPosition(pos => {
-        query(pos.coords);
+    form.classList.add('sonne-in-progress');
+    new Promise(navigator.geolocation.getCurrentPosition).then(pos => {
+        return query(pos.coords);
     }, e => {
-        query();
+        return query();
+    }).then(() => {
+        form.classList.remove('sonne-in-progress');
     });
 });

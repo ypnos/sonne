@@ -10,3 +10,17 @@ body:not(.sonne-no-results) .sonne-no-results-label {
     width: 100%;
     height: 400px;
 }
+
+form button span {
+    animation: spin 2s infinite linear;
+}
+
+form:not(.sonne-in-progress) button span {
+    display: none;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
