@@ -74,7 +74,7 @@ class IndexHandler(RequestHandler):
 class QueryEndpoint(RequestHandler):
     def get(self):
         temp = int(self.get_query_argument('temp'))
-        if not (0 <= temp <= 100):
+        if not (-50 <= temp <= 50):
             raise ValueError('temp')
         month = int(self.get_query_argument('month'))
         if not (0 <= month <= 11):
