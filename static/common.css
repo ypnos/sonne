@@ -1,13 +1,5 @@
-ul > li {
-    font-size: 2em;
-}
-
-.sonne-city {
-    margin-right: 1ch;
-}
-
-.sonne-dist {
-    margin-left: 1ch;
+body {
+    padding-top: 70px;
 }
 
 body:not(.sonne-no-results) .sonne-no-results-label {

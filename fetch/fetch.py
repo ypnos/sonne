@@ -44,12 +44,16 @@ if __name__ == '__main__':
 
 	print(notice.format(guideurl))
 
+	if len(argv) > 2:
+		filename = argv[2]
+
 	data = {}
 	try:
-		with open(argv[2], 'r') as f:
+		with open(filename, 'r') as f:
 			data = json.load(f)
 	except:
 		pass
+
 	with open(argv[1], 'r', newline='') as f:
 		reader = csv.reader(f, delimiter=';', quotechar='"')
 		for row in reader:
@@ -70,7 +74,6 @@ if __name__ == '__main__':
 			print('.', end='', file=sys.stderr)
 			data[key] = nice_entry(entry, row[0])
 		print('', file=sys.stderr)
-	if len(argv) > 2:
-		filename = argv[2]
+
 	with open(filename, 'w') as f:
 		json.dump(data, f)
