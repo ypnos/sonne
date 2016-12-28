@@ -16,15 +16,27 @@ class Sonne:
 
     def run(self):
         # TODO load cities data from db dump
-        self.cities = [City('Berlin', 23), City('New York', 12)]
+        data = json.load(open('wwis.json'))
+        for item in data.values():
+            name = item['cityName']
+            #if not 'climateMonth' in item['climate']:
+            climate_month = item['climate']['climateMonth']
+            if len(climate_month) != 12: # or not climate_month[0]['maxTemp']:
+                print('Warning: No climate data for {}, skipping'.format(name))
+                continue
+            temps = [float(m['maxTemp'] or -1) for m in climate_month]
+            latlong = (float(item['cityLatitude']), float(item['cityLongitude']))
+            self.cities.append(City(name, temps, latlong))
+        print('Read climate data for {} cities'.format(len(self.cities)))
 
         self.application.listen(8080)
         IOLoop.current().start()
 
 class City:
-    def __init__(self, name, temp):
+    def __init__(self, name, temps, latlong):
         self.name = name
-        self.temp = temp
+        self.temps = temps
+        self.latlong = latlong
 
 class IndexHandler(RequestHandler):
     def get(self):
@@ -38,12 +50,42 @@ class QueryEndpoint(RequestHandler):
         month = int(self.get_query_argument('month'))
         if not (0 <= month <= 11):
             raise ValueError('month')
+        latlong = self.get_query_argument('latlong', None)
+        if latlong:
+            latlong = latlong.split(',')
+            latlong = float(latlong[0]), float(latlong[1])
+        print('latlong', latlong)
 
         # Naive query
         app = self.application.settings['app']
-        cities = [c for c in app.cities if temp - 2 <= c.temp <= temp + 2]
+        cities = [dict(vars(c)) for c in app.cities if temp - 2 <= c.temps[month] <= temp + 2]
 
-        self.write(json.dumps([vars(c) for c in cities]))
+        if latlong:
+            for city in cities:
+                city['dist'] = distance(latlong, city['latlong'])
+            cities.sort(key=lambda c: c['dist'])
+
+        self.write(json.dumps(cities))
+
+def distance(frm, to):
+	return haversine(frm[0], frm[1], to[0], to[1])
+# XXX: stackoverflow copy
+from math import radians, cos, sin, asin, sqrt
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    return c * r
 
 if __name__ == '__main__':
     Sonne().run()
