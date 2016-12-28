@@ -12,7 +12,8 @@ class Sonne:
         self.application = Application([
             (r'/', IndexHandler),
             (r'/api/query', QueryEndpoint),
-            (r'/static/lib/(.*)', StaticFileHandler, {'path': 'node_modules'})
+            (r'/static/lib/(.*)', StaticFileHandler, {'path': 'node_modules'}),
+            (r'/static/(.*)', StaticFileHandler, {'path': 'static'})
         ], debug=True, app=self)
 
     def run(self):

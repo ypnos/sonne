@@ -7,30 +7,10 @@
         <title>Sonne</title>
         <link rel="stylesheet" href="/static/lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="/static/lib/leaflet/dist/leaflet.css" />
+        <link rel="stylesheet" href="/static/common.css" />
         <script src="/static/lib/leaflet/dist/leaflet.js"></script>
-
-        <style>
-            ul > li {
-                font-size: 2em;
-            }
-
-            .sonne-city {
-                margin-right: 1ch;
-            }
-
-            .sonne-dist {
-                margin-left: 1ch;
-            }
-
-            body:not(.sonne-no-results) .sonne-no-results-label {
-                display: none;
-            }
-
-            #map {
-                width: 500px;
-                height: 400px;
-            }
-        </style>
+        <script src="/static/common.js" defer="defer"></script>
+        <script src="/static/map.js" defer="defer"></script>
     </head>
 
     <body>
@@ -71,65 +51,9 @@
             <span class="sonne-city"></span><span class="sonne-temp"></span><span class="sonne-dist"></span>
         </template>
 
-        <script>
-            function query(pos) {
-                let ul = document.querySelector('ul');
-                ul.textContent = '';
-
-                let month = form.elements['month'].value;
-
-                let url = `/api/query?temp=${form.elements['temp'].value}&month=${month}`;
-                if (pos) {
-                    url += `&latlong=${pos.latitude},${pos.longitude}`
-                }
-                fetch(url).then(response => response.json()).then(results => {
-                    document.body.classList.toggle('sonne-no-results', results.length === 0);
-                    for (let result of results) {
-                        console.log(result);
-                        let li = document.createElement('li');
-                        li.appendChild(document.importNode(document.querySelector('#sonne-city-template').content, true));
-                        li.querySelector('.sonne-city').textContent = result.name;
-                        li.querySelector('.sonne-temp').textContent = `${result.temps[month]}°C`;
-                        if (result.dist) {
-                            li.querySelector('.sonne-dist').textContent = `${Math.round(result.dist)}km`;
-                        }
-                        ul.appendChild(li);
-                    }
-                });
-            }
-
-            let form = document.querySelector('form');
-            form.addEventListener('submit', event => {
-                event.preventDefault();
-                navigator.geolocation.getCurrentPosition(pos => {
-                    query(pos.coords);
-                }, e => {
-                    query();
-                });
-            });
-        </script>
-
         <!-- World map -->
         <div class="container">
             <div id="map"></div>
         </div>
-        <script>
-        var map = L.map('map', {
-        noWrap: true,
-        center: [35, 0],
-        zoom: 1
-        });
-
-        // create the tile layer with correct attribution
-        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osm = new L.TileLayer(osmUrl, {
-            minZoom: 0,
-            maxZoom: 5,
-            noWrap: true,
-            attribution: osmAttrib
-        });
-        map.addLayer(osm);
-        </script>
     </body>
 </html>
