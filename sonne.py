@@ -45,7 +45,10 @@ class City:
 
 class IndexHandler(RequestHandler):
     def get(self):
-        self.render('index.html')
+        data = {
+            'title': 'Sonne'
+        }
+        self.render('index.html', **data)
 
 class QueryEndpoint(RequestHandler):
     def get(self):
