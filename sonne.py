@@ -8,6 +8,8 @@ from tornado.web import Application, RequestHandler, StaticFileHandler
 
 import json
 
+sonne = None # global access to application object
+
 class Sonne:
     def __init__(self):
         self.cities = []
@@ -16,7 +18,7 @@ class Sonne:
             (r'/api/query', QueryEndpoint),
             (r'/static/lib/(.*)', StaticFileHandler, {'path': 'node_modules'}),
             (r'/static/(.*)', StaticFileHandler, {'path': 'static'})
-        ], debug=True, app=self)
+        ], debug=True)
 
     def run(self, port):
         # TODO load cities data from db dump
@@ -65,8 +67,7 @@ class QueryEndpoint(RequestHandler):
         print('latlong', latlong)
 
         # Naive query
-        app = self.application.settings['app']
-        cities = [dict(vars(c)) for c in app.cities if temp - 2 <= c.temps[month] <= temp + 2]
+        cities = [dict(vars(c)) for c in sonne.cities if temp - 2 <= c.temps[month] <= temp + 2]
 
         if latlong:
             for city in cities:
@@ -97,4 +98,5 @@ def haversine(lon1, lat1, lon2, lat2):
 
 if __name__ == '__main__':
     port = argv[1] if len(argv) > 1 else 8080
-    Sonne().run(port)
+    sonne = Sonne()
+    sonne.run(port)
