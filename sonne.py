@@ -7,11 +7,13 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler, StaticFileHandler
 
 import json
+import configparser
 
 sonne = None # global access to application object
 
 class Sonne:
     def __init__(self):
+        self.config = None
         self.cities = []
         self.application = Application([
             (r'/', IndexHandler),
@@ -20,8 +22,24 @@ class Sonne:
             (r'/static/(.*)', StaticFileHandler, {'path': 'static'})
         ], debug=True)
 
-    def run(self, port):
-        # TODO load cities data from db dump
+    def run(self):
+        self.loadConfig()
+        self.loadData()
+
+        port = self.config['global'].get('port', 8080)
+        self.application.listen(port)
+        print('Listening on port {}'.format(port))
+        IOLoop.current().start()
+
+    def loadConfig(self):
+        config = configparser.ConfigParser()
+        try:
+            config.read('site.cfg')
+        except:
+            print('Could not read site.cfg!')
+        self.config = config
+
+    def loadData(self):
         data = json.load(open('wwis.json'))
         for item in data.values():
             name = item['cityName']
@@ -35,10 +53,6 @@ class Sonne:
             self.cities.append(City(name, temps, latlong))
         print('Read climate data for {} cities'.format(len(self.cities)))
 
-        self.application.listen(port)
-        print('Listening on port {}'.format(port))
-        IOLoop.current().start()
-
 class City:
     def __init__(self, name, temps, latlong):
         self.name = name
@@ -48,7 +62,7 @@ class City:
 class IndexHandler(RequestHandler):
     def get(self):
         data = {
-            'title': 'Sonne'
+            'title': sonne.config['global'].get('name', 'Sonne')
         }
         self.render('index.html', **data)
 
@@ -97,6 +111,5 @@ def haversine(lon1, lat1, lon2, lat2):
     return c * r
 
 if __name__ == '__main__':
-    port = argv[1] if len(argv) > 1 else 8080
     sonne = Sonne()
-    sonne.run(port)
+    sonne.run()
