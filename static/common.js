@@ -20,6 +20,7 @@ function query(pos) {
             let a = li.querySelector('.sonne-city a');
             a.href = `https://www.google.com/maps/dir/Current+Location/${result.name}`;
             a.textContent = result.name;
+            li.querySelector('.sonne-city small').textContent = result.country;
             li.querySelector('.sonne-temp').textContent = `${result.temps[month]} °C`;
             if (result.dist) {
                 li.querySelector('.sonne-dist').textContent = `${Math.round(result.dist)} km`;
