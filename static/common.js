@@ -12,6 +12,7 @@ function query(pos) {
     }
     fetch(url).then(response => response.json()).then(results => {
         document.body.classList.toggle('sonne-no-results', results.length === 0);
+        sonneMap.clearCities();
         for (let result of results) {
             console.log(result);
             let li = document.createElement('li');
@@ -22,6 +23,8 @@ function query(pos) {
                 li.querySelector('.sonne-dist').textContent = `${Math.round(result.dist)} km`;
             }
             ul.appendChild(li);
+
+            sonneMap.addCity(result);
         }
     });
 }
