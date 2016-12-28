@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Sonne</title>
         <link rel="stylesheet" href="/static/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/static/lib/leaflet/dist/leaflet.css" />
+        <script src="/static/lib/leaflet/dist/leaflet.js"></script>
 
         <style>
             ul > li {
@@ -22,6 +24,11 @@
 
             body:not(.sonne-no-results) .sonne-no-results-label {
                 display: none;
+            }
+
+            #map {
+                width: 500px;
+                height: 400px;
             }
         </style>
     </head>
@@ -100,6 +107,29 @@
                     query();
                 });
             });
+        </script>
+
+        <!-- World map -->
+        <div class="container">
+            <div id="map"></div>
+        </div>
+        <script>
+        var map = L.map('map', {
+        noWrap: true,
+        center: [35, 0],
+        zoom: 1
+        });
+
+        // create the tile layer with correct attribution
+        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+        var osm = new L.TileLayer(osmUrl, {
+            minZoom: 0,
+            maxZoom: 5,
+            noWrap: true,
+            attribution: osmAttrib
+        });
+        map.addLayer(osm);
         </script>
     </body>
 </html>
