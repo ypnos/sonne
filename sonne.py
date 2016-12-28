@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """TODO."""
 
+from sys import argv
+
 from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler, StaticFileHandler
 
@@ -16,7 +18,7 @@ class Sonne:
             (r'/static/(.*)', StaticFileHandler, {'path': 'static'})
         ], debug=True, app=self)
 
-    def run(self):
+    def run(self, port):
         # TODO load cities data from db dump
         data = json.load(open('wwis.json'))
         for item in data.values():
@@ -31,7 +33,8 @@ class Sonne:
             self.cities.append(City(name, temps, latlong))
         print('Read climate data for {} cities'.format(len(self.cities)))
 
-        self.application.listen(8080)
+        self.application.listen(port)
+        print('Listening on port {}'.format(port))
         IOLoop.current().start()
 
 class City:
@@ -90,4 +93,5 @@ def haversine(lon1, lat1, lon2, lat2):
     return c * r
 
 if __name__ == '__main__':
-    Sonne().run()
+    port = argv[1] if len(argv) > 1 else 8080
+    Sonne().run(port)
