@@ -19,7 +19,7 @@ function query(pos) {
             li.classList.add('list-group-item');
             li.appendChild(document.importNode(document.querySelector('#sonne-city-template').content, true));
             let a = li.querySelector('.sonne-city a');
-            a.href = `https://www.google.com/maps/dir/Current+Location/${result.name}`;
+            a.href = `https://www.google.com/maps/dir/Current+Location/${result.name},${result.country}`;
             a.textContent = result.name;
             li.querySelector('.sonne-city small').textContent = result.country;
             li.querySelector('.sonne-temp').textContent = `${result.temps[month]} °C`;
