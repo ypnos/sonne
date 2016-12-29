@@ -24,3 +24,7 @@ form:not(.sonne-in-progress) button span {
         transform: rotate(360deg);
     }
 }
+
+li .glyphicon {
+    color: #777;
+}

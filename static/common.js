@@ -24,8 +24,9 @@ function query(pos) {
             a.textContent = result.name;
             li.querySelector('.sonne-city small').textContent = result.country;
             li.querySelector('.sonne-temp').textContent = `${result.temps[month]} °C`;
+            li.querySelector('.sonne-raindays span:last-child').textContent = result.raindays[month];
             if (result.dist) {
-                li.querySelector('.sonne-dist').textContent = `${Math.round(result.dist)} km`;
+                li.querySelector('.sonne-dist span:last-child').textContent = `${Math.round(result.dist)} km`;
             }
             ul.appendChild(li);
 
@@ -39,7 +40,7 @@ let form = document.querySelector('form');
 form.addEventListener('submit', event => {
     event.preventDefault();
     form.classList.add('sonne-in-progress');
-    new Promise(navigator.geolocation.getCurrentPosition).then(pos => {
+    new Promise(navigator.geolocation.getCurrentPosition.bind(navigator.geolocation)).then(pos => {
         return query(pos.coords);
     }, e => {
         return query();

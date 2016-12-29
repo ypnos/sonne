@@ -53,15 +53,20 @@ class Sonne:
                 print('Warning: No climate data for {}, skipping'.format(name))
                 continue
             temps = [float(m['maxTemp'] or -1) for m in climate_month]
+            try:
+                raindays = [int(float(m['raindays'] or -1)) for m in climate_month]
+            except ValueError as e:
+                print('Warning: Corrupt rainday data ({}), skipping'.format(e))
             latlong = (float(item['cityLatitude']), float(item['cityLongitude']))
-            self.cities.append(City(name, country, temps, latlong))
+            self.cities.append(City(name, country, temps, raindays, latlong))
         print('Read climate data for {} cities'.format(len(self.cities)))
 
 class City:
-    def __init__(self, name, country, temps, latlong):
+    def __init__(self, name, country, temps, raindays, latlong):
         self.name = name
         self.country = country
         self.temps = temps
+        self.raindays = raindays
         self.latlong = latlong
 
 class IndexHandler(RequestHandler):
