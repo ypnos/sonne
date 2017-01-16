@@ -1,13 +1,5 @@
-ul > li {
-    font-size: 2em;
-}
-
-.sonne-city {
-    margin-right: 1ch;
-}
-
-.sonne-dist {
-    margin-left: 1ch;
+body {
+    padding-top: 70px;
 }
 
 body:not(.sonne-no-results) .sonne-no-results-label {
@@ -17,4 +9,22 @@ body:not(.sonne-no-results) .sonne-no-results-label {
 #map {
     width: 100%;
     height: 400px;
+}
+
+form button span {
+    animation: spin 2s infinite linear;
+}
+
+form:not(.sonne-in-progress) button span {
+    display: none;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+li .glyphicon {
+    color: #777;
 }

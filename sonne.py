@@ -9,6 +9,8 @@ from tornado.web import Application, RequestHandler, StaticFileHandler
 import json
 import configparser
 
+DEFAULT_CONFIG = {'global': {'name': 'Sonne', 'port': 8080}}
+
 sonne = None # global access to application object
 
 class Sonne:
@@ -26,13 +28,14 @@ class Sonne:
         self.loadConfig()
         self.loadData()
 
-        port = self.config['global'].get('port', 8080)
+        port = self.config['global']['port']
         self.application.listen(port)
         print('Listening on port {}'.format(port))
         IOLoop.current().start()
 
     def loadConfig(self):
         config = configparser.ConfigParser()
+        config.read_dict(DEFAULT_CONFIG)
         try:
             config.read('site.cfg')
         except:
@@ -43,33 +46,40 @@ class Sonne:
         data = json.load(open('wwis.json'))
         for item in data.values():
             name = item['cityName']
+            country = item['country']
             #if not 'climateMonth' in item['climate']:
             climate_month = item['climate']['climateMonth']
             if len(climate_month) != 12: # or not climate_month[0]['maxTemp']:
                 print('Warning: No climate data for {}, skipping'.format(name))
                 continue
             temps = [float(m['maxTemp'] or -1) for m in climate_month]
+            try:
+                raindays = [int(float(m['raindays'] or -1)) for m in climate_month]
+            except ValueError as e:
+                print('Warning: Corrupt rainday data ({}), skipping'.format(e))
             latlong = (float(item['cityLatitude']), float(item['cityLongitude']))
-            self.cities.append(City(name, temps, latlong))
+            self.cities.append(City(name, country, temps, raindays, latlong))
         print('Read climate data for {} cities'.format(len(self.cities)))
 
 class City:
-    def __init__(self, name, temps, latlong):
+    def __init__(self, name, country, temps, raindays, latlong):
         self.name = name
+        self.country = country
         self.temps = temps
+        self.raindays = raindays
         self.latlong = latlong
 
 class IndexHandler(RequestHandler):
     def get(self):
         data = {
-            'title': sonne.config['global'].get('name', 'Sonne')
+            'title': sonne.config['global']['name']
         }
         self.render('index.html', **data)
 
 class QueryEndpoint(RequestHandler):
     def get(self):
         temp = int(self.get_query_argument('temp'))
-        if not (0 <= temp <= 100):
+        if not (-50 <= temp <= 50):
             raise ValueError('temp')
         month = int(self.get_query_argument('month'))
         if not (0 <= month <= 11):
