@@ -7,8 +7,8 @@ let map = L.map('map', {
 });
 
 // create the tile layer with correct attribution
-let osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-let osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+let osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+let osmAttrib='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
 let osm = new L.TileLayer(osmUrl, {
 	minZoom: 0,
 	maxZoom: 5,
