@@ -24,10 +24,16 @@ function query(pos) {
             a.textContent = result.name;
             li.querySelector('.sonne-city small').textContent = result.country;
             li.querySelector('.sonne-temp').textContent = `${result.temps[month]} °C`;
-            li.querySelector('.sonne-raindays span:last-child').textContent = result.raindays[month];
-            if (result.dist) {
-                li.querySelector('.sonne-dist span:last-child').textContent = `${Math.round(result.dist)} km`;
+
+            let updateLi = function (selector, text) {
+                if (text) {
+                    li.querySelector(selector + ' span:last-child').textContent = text;
+                } else {
+                    li.querySelector(selector).remove(); // no data, so don't display
+                }
             }
+            updateLi('.sonne-raindays', (result.raindays[month] > -1 ? result.raindays[month] : null));
+            updateLi('.sonne-dist', (result.dist ? `${Math.round(result.dist)} km` : null));
             ul.appendChild(li);
 
             sonneMap.addCity(result);
