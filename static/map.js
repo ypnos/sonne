@@ -6,17 +6,16 @@ sonneMap.init = function () {
 	this.markers = [];
 	this.map = L.map('map', {
 		center: [35, 0],
-		zoom: 1
+		zoom: 1,
+		attributionControl: false
 	});
 
 	// create the tile layer with correct attribution
 	let osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-	let osmAttrib='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
 	let osm = new L.TileLayer(osmUrl, {
 		minZoom: 0,
 		maxZoom: 5,
 		noWrap: true,
-		attribution: osmAttrib
 	});
 
 	this.map.addLayer(osm);
