@@ -6,7 +6,7 @@ from sys import argv
 from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler, StaticFileHandler
 
-import json
+import simplejson as json
 import configparser
 
 DEFAULT_CONFIG = {'global': {'name': 'Sonne', 'port': 8080}}
@@ -52,7 +52,7 @@ class Sonne:
             if len(climate_month) != 12: # or not climate_month[0]['maxTemp']:
                 print('Warning: No climate data for {}, skipping'.format(name))
                 continue
-            temps = [float(m['maxTemp'] or -1) for m in climate_month]
+            temps = [float(m['maxTemp'] or 'nan') for m in climate_month]
             try:
                 raindays = [int(float(m['raindays'] or -1)) for m in climate_month]
             except ValueError as e:
@@ -98,7 +98,7 @@ class QueryEndpoint(RequestHandler):
                 city['dist'] = distance(latlong, city['latlong'])
             cities.sort(key=lambda c: c['dist'])
 
-        self.write(json.dumps(cities))
+        self.write(json.dumps(cities, ignore_nan=True))
 
 def distance(frm, to):
 	return haversine(frm[0], frm[1], to[0], to[1])
