@@ -9,38 +9,41 @@ from tornado.web import Application, RequestHandler, StaticFileHandler
 import simplejson as json
 import configparser
 
-DEFAULT_CONFIG = {'global': {'name': 'Sonne', 'port': 8080}}
+DEFAULT_CONFIG = {'global': {
+    'name': 'Sonne',
+    'port': 8080,
+    'debug': True
+}}
 
 sonne = None # global access to application object
 
+def readConfig():
+    config = configparser.ConfigParser()
+    config.read_dict(DEFAULT_CONFIG)
+    try:
+        config.read('site.cfg')
+    except:
+        print('Could not read site.cfg! Using defaults.')
+    return config
+
 class Sonne:
     def __init__(self):
-        self.config = None
+        self.config = readConfig()
         self.cities = []
         self.application = Application([
             (r'/', IndexHandler),
             (r'/api/query', QueryEndpoint),
             (r'/static/lib/(.*)', StaticFileHandler, {'path': 'node_modules'}),
             (r'/static/(.*)', StaticFileHandler, {'path': 'static'})
-        ], debug=True)
+        ], debug=self.config['global']['debug'])
 
     def run(self):
-        self.loadConfig()
         self.loadData()
 
         port = self.config['global']['port']
         self.application.listen(port)
         print('Listening on port {}'.format(port))
         IOLoop.current().start()
-
-    def loadConfig(self):
-        config = configparser.ConfigParser()
-        config.read_dict(DEFAULT_CONFIG)
-        try:
-            config.read('site.cfg')
-        except:
-            print('Could not read site.cfg!')
-        self.config = config
 
     def loadData(self):
         data = json.load(open('wwis.json'))
