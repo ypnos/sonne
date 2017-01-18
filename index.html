@@ -14,21 +14,6 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/">{{ title }}</a>
-                </div>
-            </div>
-        </nav>
-        <div class="container">
-           {% include form.html %}
-
-            <ul class="list-group">
-            </ul>
-            <div class="alert alert-warning sonne-no-results-label">Nowhere :/</div>
-        </div>
-
         <template id="sonne-city-template">
             <h4 class="list-group-item-heading sonne-city">
                 <a target="_blank"></a> <small>Germany</small>
@@ -41,9 +26,35 @@
             </p>
         </template>
 
-        <!-- World map -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">{{ title }}</a>
+                </div>
+            </div>
+        </nav>
+
         <div class="container">
-            <div id="map"></div>
+            <div class="row">
+                <div class="col-md-3">
+                    {% include form.html %}
+                </div>
+                <div class="col-md-9">
+                    <!-- World map -->
+                    <div id="map"></div>
+
+                    <hr />
+
+                    <!-- City list -->
+                    <div class="sonne-results-list">
+                        <ul class="list-group">
+                        </ul>
+                    </div>
+
+                    <!-- Alert for empty result -->
+                    <div class="alert alert-warning sonne-no-results-label">Nowhere 😕</div>
+                </div>
+            </div>
         </div>
         <footer class="container text-muted">Climate data provided by
             <a href="http://worldweather.wmo.int">WMO World Weather Information Service</a>.
