@@ -28,3 +28,11 @@ form:not(.sonne-in-progress) button span {
 li .glyphicon {
     color: #777;
 }
+
+.sonne-maxtemp small {
+    color: red;
+}
+
+.sonne-mintemp small {
+    color: blue;
+}

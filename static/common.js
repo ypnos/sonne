@@ -23,7 +23,6 @@ function query(pos) {
             a.href = `https://www.google.com/maps/dir/Current+Location/${result.name},${result.country}`;
             a.textContent = result.name;
             li.querySelector('.sonne-city small').textContent = result.country;
-            li.querySelector('.sonne-temp').textContent = `${result.temps[month]} °C`;
 
             let updateLi = function (selector, text) {
                 if (text) {
@@ -32,6 +31,8 @@ function query(pos) {
                     li.querySelector(selector).remove(); // no data, so don't display
                 }
             }
+            updateLi('.sonne-maxtemp', (result.maxtemps[month] !== null ? `${result.maxtemps[month]} °C` : null));
+            updateLi('.sonne-mintemp', (result.mintemps[month] !== null ? `${result.mintemps[month]} °C` : null));
             updateLi('.sonne-raindays', (result.raindays[month] > -1 ? result.raindays[month] : null));
             updateLi('.sonne-dist', (result.dist ? `${Math.round(result.dist)} km` : null));
             ul.appendChild(li);

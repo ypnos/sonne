@@ -52,20 +52,22 @@ class Sonne:
             if len(climate_month) != 12: # or not climate_month[0]['maxTemp']:
                 print('Warning: No climate data for {}, skipping'.format(name))
                 continue
-            temps = [float(m['maxTemp'] or 'nan') for m in climate_month]
+            maxtemps = [float(m['maxTemp'] or 'nan') for m in climate_month]
+            mintemps = [float(m['minTemp'] or 'nan') for m in climate_month]
             try:
                 raindays = [int(float(m['raindays'] or -1)) for m in climate_month]
             except ValueError as e:
                 print('Warning: Corrupt rainday data ({}), skipping'.format(e))
             latlong = (float(item['cityLatitude']), float(item['cityLongitude']))
-            self.cities.append(City(name, country, temps, raindays, latlong))
+            self.cities.append(City(name, country, maxtemps, mintemps, raindays, latlong))
         print('Read climate data for {} cities'.format(len(self.cities)))
 
 class City:
-    def __init__(self, name, country, temps, raindays, latlong):
+    def __init__(self, name, country, maxtemps, mintemps, raindays, latlong):
         self.name = name
         self.country = country
-        self.temps = temps
+        self.maxtemps = maxtemps
+        self.mintemps = mintemps
         self.raindays = raindays
         self.latlong = latlong
 
@@ -91,7 +93,7 @@ class QueryEndpoint(RequestHandler):
         print('latlong', latlong)
 
         # Naive query
-        cities = [dict(vars(c)) for c in sonne.cities if temp - 2 <= c.temps[month] <= temp + 2]
+        cities = [dict(vars(c)) for c in sonne.cities if temp - 2 <= c.maxtemps[month] <= temp + 2]
 
         if latlong:
             for city in cities:
