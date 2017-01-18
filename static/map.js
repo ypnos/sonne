@@ -13,9 +13,8 @@ sonneMap.init = function () {
 	// create the tile layer with correct attribution
 	let osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 	let osm = new L.TileLayer(osmUrl, {
-		minZoom: 0,
-		maxZoom: 5,
-		noWrap: true,
+		minZoom: 1,
+		maxZoom: 8
 	});
 
 	this.map.addLayer(osm);
