@@ -18,7 +18,7 @@ You can re-run this script to continue downloading in the case of failures."""
 from sys import argv
 import urllib.request
 import csv
-import json
+import simplejson as json
 import time
 import sys
 
@@ -76,4 +76,4 @@ if __name__ == '__main__':
 		print('', file=sys.stderr)
 
 	with open(filename, 'w') as f:
-		json.dump(data, f)
+		json.dump(data, f, sort_keys=True, indent='\t')
